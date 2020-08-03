@@ -10,7 +10,7 @@ class Cell:
     
     # The status of the walls that surround the cell.
     upper_wall  = True
-    botton_wall = True
+    bottom_wall = True
     left_wall   = True
     right_wall  = True
 

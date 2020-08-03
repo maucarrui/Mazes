@@ -1,3 +1,6 @@
+# Cell class.
+from Cell import *
+
 class Maze:
     """
     Class for a maze.
@@ -27,4 +30,4 @@ class Maze:
         # Fill the board.
         for x in range(X):
             for y in range(Y):
-                self.board[X][Y] = Cell(x, y)
+                self.board[x][y] = Cell(x, y)

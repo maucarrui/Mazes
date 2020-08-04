@@ -14,6 +14,9 @@ class Cell:
     left_wall   = True
     right_wall  = True
 
+    # The status of the cell
+    discovered = False
+
     def __init__(self, X, Y):
         """
         Creates a cell given the X and Y coordinates.
@@ -36,4 +39,11 @@ class Cell:
             self.left_wall = False
         elif wall == 'right':
             self.right_wall = False
+
+    def has_been_discovered(self):
+        """
+        Returns whether the cell has been discovered or not.
+        :return: Whether the cell has been discovered or not.
+        """
+        return self.discovered
 

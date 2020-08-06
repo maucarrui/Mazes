@@ -54,6 +54,71 @@ class Canvas:
         pygame.display.set_caption('Mazes')
         self.screen = pygame.display.set_mode(size)
 
+    def draw_path_maze(self, cell, color):
+        """
+        Draws the path of a cell in the maze.
+        :param cell: The cell which path will be drawn.
+        :param color: The color of the path.
+        """
+        center = int(self.scale / 2)
+        
+        if cell.previous is not None:
+            pygame.draw.line(self.screen,
+                             color,
+                             ((cell.X * self.scale) + center,
+                              (cell.Y * self.scale) + center),
+                             ((cell.previous.X * self.scale) + center,
+                              (cell.previous.Y * self.scale) + center),
+                             1)
+            
+            self.draw_path_maze(cell.previous, color)
+
+    def draw_traveler_maze(self, traveler):
+        """
+        Draws the given traveler in the maze.
+        :param traveler: The traveler to draw.
+        """
+        if (not self.maze.miner.is_done()):
+            return
+        
+        center  = int(self.scale / 2)
+        size    = int(self.scale / 4)
+
+        # If the exit has been found, print the solution.
+        if traveler.found_exit:
+            self.draw_path_maze(traveler.current_cell, self.white)
+        
+        # Draw possible moves for the traveler.
+        else:
+            possible_moves = traveler.log
+
+            for cell in possible_moves:
+
+                x = cell.X
+                y = cell.Y
+
+                # Draw path.
+                self.draw_path_maze(cell, self.yellow)
+
+                # Draw move.
+                pygame.draw.circle(self.screen,
+                                   self.cyan,
+                                   ((x * self.scale) + center,
+                                    (y * self.scale) + center),
+                                   size)
+
+            # Draw traveler.
+            if (self.maze.miner.is_done()):
+                x = traveler.X
+                y = traveler.Y
+
+                pygame.draw.circle(self.screen,
+                                   self.orange,
+                                   ((x * self.scale) + center,
+                                    (y * self.scale) + center),
+                                   size)
+                             
+
     def draw_maze(self):
         """
         Draws the current state of the maze.
@@ -64,10 +129,6 @@ class Canvas:
         miner_y = self.maze.miner.Y
         center  = int(self.scale / 2)
         size    = int(self.scale / 4)
-
-        # Variables needed to draw the traveler.
-        traveler_x = self.maze.traveler.X
-        traveler_y = self.maze.traveler.Y
 
         for x in range(self.maze.x_size):
             for y in range(self.maze.y_size):
@@ -122,23 +183,15 @@ class Canvas:
                                         (y * self.scale) + center),
                                        size + 2)
 
-                # Draw miner.
-                if (not self.maze.miner.is_done()):
-                    if (x == miner_x) and (y == miner_y):
-                        pygame.draw.circle(self.screen,
-                                           self.white,
-                                           ((x * self.scale) + center,
-                                            (y * self.scale) + center),
-                                           size)
-
-                # Draw traveler.
-                if (self.maze.miner.is_done()):
-                    if (x == traveler_x) and (y == traveler_y):
-                        pygame.draw.circle(self.screen,
-                                           self.orange,
-                                           ((x * self.scale) + center,
-                                            (y * self.scale) + center),
-                                           size)
+        # Draw miner.
+        if (not self.maze.miner.is_done()):
+            x = miner_x
+            y = miner_y
+            pygame.draw.circle(self.screen,
+                               self.white,
+                               ((x * self.scale) + center,
+                                (y * self.scale) + center),
+                               size)
                                            
                                            
 
@@ -239,16 +292,25 @@ class Canvas:
         Main loop where the canvas will be printed and the main 
         events will be handled.
         """
-        running = True
-        mode    = 'maze'
-        auto    = False
-        search  = 'DFS'
+        running  = True
+        mode     = 'maze'
+        auto     = False
+        traveler = 'DFS'
+
+        traveler_BFS = self.maze.traveler_BFS
+        traveler_DFS = self.maze.traveler_DFS
         
         while running:
             self.screen.fill(self.dark_gray)
 
             if mode == 'maze':
                 self.draw_maze()
+
+                if traveler == 'DFS':
+                    self.draw_traveler_maze(traveler_DFS)
+                else:
+                    self.draw_traveler_maze(traveler_BFS)
+                
             if mode == 'graph':
                 self.draw_graph()
 
@@ -278,9 +340,16 @@ class Canvas:
                         else:
                             mode = 'maze'
 
+                    # Switch traveler.
+                    if event.key == pygame.K_s:
+                        if traveler == 'BFS':
+                            traveler = 'DFS'
+                        else:
+                            traveler = 'BFS'
+
                     # Solve maze.
                     if event.key == pygame.K_e:
-                        self.maze.solve_maze_step_by_step(search)
+                        self.maze.solve_maze_step_by_step()
                     
 
             pygame.display.update()

@@ -4,6 +4,9 @@ from Cell import *
 # Miner class.
 from Miner import *
 
+# Traveler class.
+from Traveler import *
+
 # Random functions
 import random
 
@@ -22,6 +25,9 @@ class Maze:
 
     # The miner of the maze.
     miner = None
+
+    # The traveler of the maze.
+    traveler = None
 
     def __init__(self, X, Y):
         """
@@ -45,6 +51,9 @@ class Maze:
         random_y = random.randint(0, Y-1)
         self.board[0][random_y].start = True
 
+        # Spawns the traveler in the beginning of the maze.
+        self.traveler = Traveler(self.board[0][random_y])
+
         # Sets a random cell as the ending of the maze.
         random_y = random.randint(0, Y-1)
         self.board[-1][random_y].end = True
@@ -58,6 +67,22 @@ class Maze:
                            self.board[initial_X][initial_Y])
 
     def build_maze_step_by_step(self):
+        """
+        Builds the maze step by step.
+        """
         if (not self.miner.is_done()):
             self.miner.explore(self.board)
+
+    def solve_maze_step_by_step(self, method):
+        """
+        Solves the maze step by step.
+        :param method: The method that will be used to search the exit.
+        :return: The current state of the traveler or -1 if the miner is 
+            not done.
+        """
+        if (self.miner.is_done()):
+            return self.traveler.search(self.board, method)
+        else:
+            return -1
+        
 

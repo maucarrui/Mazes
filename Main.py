@@ -102,6 +102,22 @@ class Canvas:
                                      ((x+1) * self.scale, (y+1) * self.scale),
                                      3)
 
+                # Draw start.
+                if (cell.start):
+                    pygame.draw.circle(self.screen,
+                                       self.green,
+                                       ((x * self.scale) + center,
+                                        (y * self.scale) + center),
+                                       size + 2)
+
+                # Draw end.
+                if (cell.end):
+                    pygame.draw.circle(self.screen,
+                                       self.red,
+                                       ((x * self.scale) + center,
+                                        (y * self.scale) + center),
+                                       size + 2)
+
                 # Draw miner
                 if (not self.maze.miner.is_done()):
                     if (x == miner_x) and (y == miner_y):
@@ -188,9 +204,17 @@ class Canvas:
         # Drawing vertex.
         for x in range(self.maze.x_size):
             for y in range(self.maze.y_size):
-                # Draw vertex.
+                cell = self.maze.board[x][y]
+
+                if cell.start:
+                    color = self.green
+                elif cell.end:
+                    color = self.red
+                else:
+                    color = self.purple
+                    
                 pygame.draw.circle(self.screen,
-                                   self.purple,
+                                   color,
                                    ((x * self.scale) + center,
                                     (y * self.scale) + center),
                                    size)

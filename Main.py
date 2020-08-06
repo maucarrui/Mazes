@@ -59,6 +59,12 @@ class Canvas:
         Draws the current state of the maze.
         """
 
+        # Variables needed to draw the miner.
+        miner_x = self.maze.miner.X
+        miner_y = self.maze.miner.Y
+        center  = int(self.scale / 2)
+        size    = int(self.scale / 4)
+
         for x in range(self.maze.x_size):
             for y in range(self.maze.y_size):
 
@@ -71,7 +77,7 @@ class Canvas:
                                      (x * self.scale, y * self.scale),
                                      ((x+1) * self.scale, y * self.scale),
                                      3)
-                    
+
                 # Draw bottom wall of cell.
                 if cell.bottom_wall:
                     pygame.draw.line(self.screen,
@@ -96,6 +102,16 @@ class Canvas:
                                      ((x+1) * self.scale, (y+1) * self.scale),
                                      3)
 
+                # Draw miner
+                if (not self.maze.miner.is_done()):
+                    if (x == miner_x) and (y == miner_y):
+                        pygame.draw.circle(self.screen,
+                                           self.white,
+                                           ((x * self.scale) + center,
+                                            (y * self.scale) + center),
+                                           size)
+                                           
+
     def draw_graph(self):
         """
         Draws the current state of the maze as a graph.
@@ -103,6 +119,10 @@ class Canvas:
         
         center = int(self.scale / 2)
         size   = int(self.scale / 4)
+
+        # Variables to draw the miner.
+        miner_x = self.maze.miner.X
+        miner_y = self.maze.miner.Y
 
         # Note: Drawing edges and vertices in the same cycle can
         # be done, however some edges end up over the vertices,
@@ -117,7 +137,7 @@ class Canvas:
                 cell = self.maze.board[x][y]
 
                 # Draw upper edge.
-                if cell.upper_wall:
+                if not cell.upper_wall:
                     pygame.draw.line(self.screen,
                                      self.yellow,
                                      ((x * self.scale) + center,
@@ -127,7 +147,7 @@ class Canvas:
                                      2)
 
                 # Draw bottom edge.
-                if cell.bottom_wall:
+                if not cell.bottom_wall:
                     pygame.draw.line(self.screen,
                                      self.yellow,
                                      ((x * self.scale) + center,
@@ -137,7 +157,7 @@ class Canvas:
                                      2)
 
                 # Draw left edge.
-                if cell.left_wall:
+                if not cell.left_wall:
                     pygame.draw.line(self.screen,
                                      self.yellow,
                                      ((x * self.scale) + center,
@@ -147,7 +167,7 @@ class Canvas:
                                      2)
 
                 # Draw right edge.
-                if cell.right_wall:
+                if not cell.right_wall:
                     pygame.draw.line(self.screen,
                                      self.yellow,
                                      ((x * self.scale) + center,
@@ -155,6 +175,15 @@ class Canvas:
                                      (((x+1) * self.scale) + center,
                                       (y * self.scale) + center),
                                      2)
+
+                # Draw miner.
+                if (not self.maze.miner.is_done()):
+                    if (x == miner_x) and (y == miner_y):
+                        pygame.draw.circle(self.screen,
+                                           self.white,
+                                           ((x * self.scale) + center,
+                                            (y * self.scale) + center),
+                                           size + 2)
                     
         # Drawing vertex.
         for x in range(self.maze.x_size):
@@ -173,18 +202,43 @@ class Canvas:
         events will be handled.
         """
         running = True
+        mode    = 'maze'
+        auto    = False
         
         while running:
             self.screen.fill(self.dark_gray)
 
-            self.draw_maze()
-            self.draw_graph()
+            if mode == 'maze':
+                self.draw_maze()
+            if mode == 'graph':
+                self.draw_graph()
+
+            if auto:
+                self.maze.build_maze_step_by_step()
             
             for event in pygame.event.get():
 
                 # If the user closes the window.
                 if event.type == pygame.QUIT:
                     running = False
+
+                if event.type == pygame.KEYDOWN:
+
+                    # Generate maze.
+                    if event.key == pygame.K_w:
+                        auto = not auto
+                    
+                    # Move the miner one step.
+                    if event.key == pygame.K_q:
+                        self.maze.build_maze_step_by_step()
+
+                    # Switch view.
+                    if event.key == pygame.K_m:
+                        if mode == 'maze':
+                            mode = 'graph'
+                        else:
+                            mode = 'maze'
+                    
 
             pygame.display.update()
         

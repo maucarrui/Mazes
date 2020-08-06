@@ -292,10 +292,11 @@ class Canvas:
         Main loop where the canvas will be printed and the main 
         events will be handled.
         """
-        running  = True
-        mode     = 'maze'
-        auto     = False
-        traveler = 'DFS'
+        running    = True
+        mode       = 'maze'
+        auto_mine  = False
+        traveler   = 'DFS'
+        auto_solve = False
 
         traveler_BFS = self.maze.traveler_BFS
         traveler_DFS = self.maze.traveler_DFS
@@ -314,8 +315,12 @@ class Canvas:
             if mode == 'graph':
                 self.draw_graph()
 
-            if auto and not self.maze.miner.is_done():
+            if auto_mine and not self.maze.miner.is_done():
                 self.maze.build_maze_step_by_step()
+
+            if auto_solve:
+                if not traveler_BFS.found_exit or not traveler_DFS.found_exit:
+                    self.maze.solve_maze_step_by_step()
             
             for event in pygame.event.get():
 
@@ -327,7 +332,7 @@ class Canvas:
 
                     # Generate maze.
                     if event.key == pygame.K_w:
-                        auto = not auto
+                        auto_mine = not auto_mine
                     
                     # Move the miner one step.
                     if event.key == pygame.K_q:
@@ -346,6 +351,10 @@ class Canvas:
                             traveler = 'DFS'
                         else:
                             traveler = 'BFS'
+
+                    # Generate solution.
+                    if event.key == pygame.K_r:
+                        auto_solve = not auto_solve
 
                     # Solve maze.
                     if event.key == pygame.K_e:

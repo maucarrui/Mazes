@@ -48,3 +48,8 @@ class Maze:
         self.miner = Miner(initial_X,
                            initial_Y,
                            self.board[initial_X][initial_Y])
+
+    def build_maze_step_by_step(self):
+        if (not self.miner.is_done()):
+            self.miner.explore(self.board)
+

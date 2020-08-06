@@ -41,6 +41,14 @@ class Maze:
             for y in range(Y):
                 self.board[x][y] = Cell(x, y)
 
+        # Sets a random cell as the start of the maze.
+        random_y = random.randint(0, Y-1)
+        self.board[0][random_y].start = True
+
+        # Sets a random cell as the ending of the maze.
+        random_y = random.randint(0, Y-1)
+        self.board[-1][random_y].end = True
+
         # Places a miner in a random location.
         initial_X = random.randint(0, X-1)
         initial_Y = random.randint(0, Y-1)

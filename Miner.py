@@ -45,9 +45,9 @@ class Miner:
         :return: True if it can move to the given position, False
             in other case.
         """
-        valid = (X >= 0) and (X < len(board) - 1)
-        valid = valid and (Y >= 0) and (Y < len(board[0]) - 1)
-        valid = valid and (not board[X][Y].has_been_discovered)
+        valid = (X >= 0) and (X < len(board))
+        valid = valid and (Y >= 0) and (Y < len(board[0]))
+        valid = valid and (not board[X][Y].has_been_discovered())
 
         return valid
 
@@ -98,6 +98,7 @@ class Miner:
 
             self.move(self.X, self.Y + 1)
 
+            current_cell = board[self.X][self.Y]
             current_cell.carve_wall('upper')
 
         elif direction == 'left':

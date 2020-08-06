@@ -32,6 +32,23 @@ class Cell:
         self.X = X
         self.Y = Y
 
+    def clone(self):
+        """
+        Clones the current cell.
+        :return: The cloned cell.
+        """
+        clone = Cell(self.X, self.Y)
+
+        clone.upper_wall  = self.upper_wall
+        clone.bottom_wall = self.bottom_wall
+        clone.left_wall   = self.left_wall
+        clone.right_wall  = self.right_wall
+
+        clone.start = self.start
+        clone.end   = self.end
+
+        return clone
+
     def carve_wall(self, wall):
         """
         Carves a wall of the cell, modifying the given wall status.

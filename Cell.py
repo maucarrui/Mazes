@@ -4,9 +4,9 @@ class Cell:
     """
     
     # The position of the cell in the x-axis.
-    posX = None
+    X = None
     # The position of the cell in the y-axis.
-    posY = None
+    Y = None
     
     # The status of the walls that surround the cell.
     upper_wall  = True
@@ -23,8 +23,8 @@ class Cell:
         :param X: The X coordinate.
         :param Y: The Y coordinate.
         """
-        self.posX = X
-        self.posY = Y
+        self.X = X
+        self.Y = Y
 
     def carve_wall(self, wall):
         """
@@ -34,7 +34,7 @@ class Cell:
         if wall == 'upper':
             self.upper_wall = False
         elif wall == 'bottom':
-            self.botton_wall = False
+            self.bottom_wall = False
         elif wall == 'left':
             self.left_wall = False
         elif wall == 'right':

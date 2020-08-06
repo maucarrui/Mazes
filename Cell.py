@@ -15,9 +15,13 @@ class Cell:
     right_wall  = True
 
     # The status of the cell
-    discovered = False
+    discovered = False     # The miner discovers cells.
+    explored   = False     # The traveler explores cells.
     start      = False
     end        = False
+
+    # The path which can contain the cell.
+    previous = None
 
     def __init__(self, X, Y):
         """

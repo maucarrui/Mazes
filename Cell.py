@@ -16,6 +16,8 @@ class Cell:
 
     # The status of the cell
     discovered = False
+    start      = False
+    end        = False
 
     def __init__(self, X, Y):
         """

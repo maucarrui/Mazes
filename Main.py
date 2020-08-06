@@ -12,15 +12,15 @@ class Canvas:
     # Colors. (Taken from the Dracula Theme Palette <3)
     black     = pygame.Color('#282a36')
     dark_gray = pygame.Color('#44475a') # Background.
-    white     = pygame.Color('#f8f8f2') # Player.
+    white     = pygame.Color('#f8f8f2') # Miner.
     dark_blue = pygame.Color('#6272a4') # Walls of the maze.
     cyan      = pygame.Color('#8be9fd')
     green     = pygame.Color('#50fa7b') # Beginning of the maze.
-    orange    = pygame.Color('#ffb86c') 
+    orange    = pygame.Color('#ffb86c') # Traveler.
     pink      = pygame.Color('#ff79c6')
     purple    = pygame.Color('#bd93f9') # Vertex of the graph.
     red       = pygame.Color('#ff5555') # End of the maze.
-    yellow    = pygame.Color('#f1fa8c')
+    yellow    = pygame.Color('#f1fa8c') # Edges of the graph.
 
     # The screen of the canvas.
     screen = None
@@ -64,6 +64,10 @@ class Canvas:
         miner_y = self.maze.miner.Y
         center  = int(self.scale / 2)
         size    = int(self.scale / 4)
+
+        # Variables needed to draw the traveler.
+        traveler_x = self.maze.traveler.X
+        traveler_y = self.maze.traveler.Y
 
         for x in range(self.maze.x_size):
             for y in range(self.maze.y_size):
@@ -118,7 +122,7 @@ class Canvas:
                                         (y * self.scale) + center),
                                        size + 2)
 
-                # Draw miner
+                # Draw miner.
                 if (not self.maze.miner.is_done()):
                     if (x == miner_x) and (y == miner_y):
                         pygame.draw.circle(self.screen,
@@ -126,6 +130,16 @@ class Canvas:
                                            ((x * self.scale) + center,
                                             (y * self.scale) + center),
                                            size)
+
+                # Draw traveler.
+                if (self.maze.miner.is_done()):
+                    if (x == traveler_x) and (y == traveler_y):
+                        pygame.draw.circle(self.screen,
+                                           self.orange,
+                                           ((x * self.scale) + center,
+                                            (y * self.scale) + center),
+                                           size)
+                                           
                                            
 
     def draw_graph(self):
@@ -228,6 +242,7 @@ class Canvas:
         running = True
         mode    = 'maze'
         auto    = False
+        search  = 'DFS'
         
         while running:
             self.screen.fill(self.dark_gray)
@@ -237,7 +252,7 @@ class Canvas:
             if mode == 'graph':
                 self.draw_graph()
 
-            if auto:
+            if auto and not self.maze.miner.is_done():
                 self.maze.build_maze_step_by_step()
             
             for event in pygame.event.get():
@@ -262,6 +277,10 @@ class Canvas:
                             mode = 'graph'
                         else:
                             mode = 'maze'
+
+                    # Solve maze.
+                    if event.key == pygame.K_e:
+                        self.maze.solve_maze_step_by_step(search)
                     
 
             pygame.display.update()
